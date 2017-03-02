@@ -1,6 +1,7 @@
 package com.example.hoanbk.criminalintent;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -37,9 +38,9 @@ public class CrimeLab {
     }
 
     public Crime get(UUID id){
-        for (Crime c : mCrimes) {
-            if(c.getId() == id){
-                return c;
+        for(Crime crime : mCrimes) {
+            if(crime.getId().equals(id)){
+                return crime;
             }
         }
         return null;
