@@ -1,12 +1,14 @@
 package com.example.hoanbk.criminalintent;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONTokener;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOError;
 import java.io.IOException;
@@ -22,6 +24,9 @@ import java.util.ArrayList;
  */
 
 public class CriminalIntentJSONSerializer {
+
+    public static final String TAG = "CriminalIntentJSONSerializer";
+
     private Context mContext;
     private String mFilename;
 
@@ -30,11 +35,11 @@ public class CriminalIntentJSONSerializer {
         mFilename = f;
     }
 
-    public void saveCrimes (ArrayList<Crime> crimes)
-        throws JSONException, IOException {
+    public void saveCrimes(ArrayList<Crime> crimes)
+            throws JSONException, IOException {
         // Build an array in JSON
         JSONArray array = new JSONArray();
-        for(Crime c : crimes){
+        for (Crime c : crimes) {
             array.put(c.toJSON());
         }
 
@@ -45,14 +50,14 @@ public class CriminalIntentJSONSerializer {
             writer = new OutputStreamWriter(out);
             writer.write(array.toString());
         } finally {
-            if (writer != null){
+            if (writer != null) {
                 writer.close();
             }
         }
     }
 
     public ArrayList<Crime> loadCrimes()
-        throws IOException, JSONException {
+            throws IOException, JSONException {
         ArrayList<Crime> crimes = new ArrayList<>();
         BufferedReader reader = null;
         try {
@@ -61,20 +66,24 @@ public class CriminalIntentJSONSerializer {
             reader = new BufferedReader(new InputStreamReader(in));
             StringBuilder jsonString = new StringBuilder();
             String line = null;
-            while ((line = reader.readLine()) != null){
+            while ((line = reader.readLine()) != null) {
                 // Line breaks are omitted and irrelevant
                 jsonString.append(line);
             }
+
+            Log.d(TAG, jsonString.toString());
+
             // Parse json use JSONTokener
             JSONArray array = (JSONArray) new JSONTokener(jsonString.toString()).nextValue();
             // Build the array of crimes from JSONObject
-            for (int i = 0; i < array.length(); i++){
+            for (int i = 0; i < array.length(); i++) {
                 crimes.add(new Crime(array.getJSONObject(i)));
             }
+
         } catch (FileNotFoundException e) {
             // Ignore this one; it happens when starting fresh
         } finally {
-            if (reader != null){
+            if (reader != null) {
                 reader.close();
             }
         }

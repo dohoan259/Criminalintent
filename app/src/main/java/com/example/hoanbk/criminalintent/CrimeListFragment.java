@@ -2,6 +2,8 @@ package com.example.hoanbk.criminalintent;
 
 import android.annotation.TargetApi;
 import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -33,6 +35,8 @@ import java.util.ArrayList;
 public class CrimeListFragment extends ListFragment {
 
     private static final String TAG = "CrimeListFragment";
+
+    public static final int REQUEST_CRIME = 0;
 
     private ArrayList<Crime> mCrimes;
 
@@ -121,6 +125,11 @@ public class CrimeListFragment extends ListFragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_crime_list, menu);
@@ -135,7 +144,7 @@ public class CrimeListFragment extends ListFragment {
                 CrimeLab.getInstance(getActivity()).addCrime(crime);
                 Intent i = new Intent(getActivity(), CrimeActivity.class);
                 i.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
-                startActivityForResult(i, 0);
+                startActivityForResult(i, REQUEST_CRIME);
                 return true;
             }
 //            case R.id.menu_item_show_subtitle: {
@@ -177,6 +186,19 @@ public class CrimeListFragment extends ListFragment {
         Intent i = new Intent(getActivity(), CrimePagerActivity.class);
         i.putExtra(CrimeFragment.EXTRA_CRIME_ID, c.getId());
         startActivity(i);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK){
+            return;
+        }
+
+        switch (requestCode){
+            case REQUEST_CRIME: {
+
+            }
+        }
     }
 
     private class CrimeAdapter extends ArrayAdapter<Crime>{

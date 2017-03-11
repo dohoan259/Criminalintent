@@ -12,11 +12,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 
 import java.io.FileOutputStream;
@@ -37,6 +39,10 @@ public class CrimeCameraFragment extends Fragment {
 
     private static final String TAG = "CrimeCameraFragment";
     public static final String EXTRA_PHOTO_FILENAME = "com.example.hoanbk.criminalintent.photo_filename";
+    public static final String EXTRA_PHOTO_ROTATION = "com.example.hoanbk.criminalintent.photo_rotation";
+
+    private int mRotation = 0;
+
     private Camera mCamera;
     private SurfaceView mSurfaceView;
     private View mProgressContainer;
@@ -76,6 +82,7 @@ public class CrimeCameraFragment extends Fragment {
                 // Set the photo filename on the result intent
                 Intent i = new Intent();
                 i.putExtra(EXTRA_PHOTO_FILENAME, filename);
+                i.putExtra(EXTRA_PHOTO_ROTATION, mRotation);
                 getActivity().setResult(Activity.RESULT_OK, i);
             } else {
                 getActivity().setResult(Activity.RESULT_CANCELED);
@@ -107,6 +114,11 @@ public class CrimeCameraFragment extends Fragment {
             public void onClick(View v) {
                 if(mCamera != null){
                     mCamera.takePicture(mShutterCallback, null, mJpegCallback);
+                    Display display = ((WindowManager)getActivity().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+                    mRotation = display.getRotation();
+
+                    Log.d(TAG, "Rotation: " + mRotation);
+
                 }
             }
         });
