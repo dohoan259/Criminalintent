@@ -17,19 +17,23 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
 
     protected abstract Fragment createFragment();
 
+    protected int getLayoutResId() {
+        return R.layout.activity_fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fragment);
-
+//        setContentView(R.layout.activity_fragment);
+        setContentView(getLayoutResId());
         Log.d(TAG, "onCreate()");
 
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.fragmentContainer);
-        if(fragment == null){
+        if (fragment == null) {
             fragment = createFragment();
 
-            Log.d(TAG, "fragment = " + (fragment==null));
+            Log.d(TAG, "fragment = " + (fragment == null));
 
             fm.beginTransaction()
                     .add(R.id.fragmentContainer, fragment)

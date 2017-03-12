@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
@@ -39,6 +40,24 @@ public class CrimeListFragment extends ListFragment {
     public static final int REQUEST_CRIME = 0;
 
     private ArrayList<Crime> mCrimes;
+
+    private Callbacks mCallbacks;
+    // required interface for host activities
+    public interface Callbacks {
+        void onCrimeSelected (Crime crime);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mCallbacks = (Callbacks)context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -142,9 +161,11 @@ public class CrimeListFragment extends ListFragment {
             case R.id.menu_item_new_crime: {
                 Crime crime = new Crime();
                 CrimeLab.getInstance(getActivity()).addCrime(crime);
-                Intent i = new Intent(getActivity(), CrimeActivity.class);
-                i.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
-                startActivityForResult(i, REQUEST_CRIME);
+//                Intent i = new Intent(getActivity(), CrimeActivity.class);
+//                i.putExtra(CrimeFragment.EXTRA_CRIME_ID, crime.getId());
+//                startActivityForResult(i, REQUEST_CRIME);
+                ((CrimeAdapter)getListAdapter()).notifyDataSetChanged();
+                mCallbacks.onCrimeSelected(crime);
                 return true;
             }
 //            case R.id.menu_item_show_subtitle: {
@@ -182,10 +203,11 @@ public class CrimeListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         Crime c = ((CrimeAdapter)getListAdapter()).getItem(position);
-//        Intent i = new Intent(getActivity(), CrimeActivity.class);
-        Intent i = new Intent(getActivity(), CrimePagerActivity.class);
-        i.putExtra(CrimeFragment.EXTRA_CRIME_ID, c.getId());
-        startActivity(i);
+////        Intent i = new Intent(getActivity(), CrimeActivity.class);
+//        Intent i = new Intent(getActivity(), CrimePagerActivity.class);
+//        i.putExtra(CrimeFragment.EXTRA_CRIME_ID, c.getId());
+//        startActivity(i);
+        mCallbacks.onCrimeSelected(c);
     }
 
     @Override
@@ -199,6 +221,10 @@ public class CrimeListFragment extends ListFragment {
 
             }
         }
+    }
+
+    public void updateUI() {
+        ((CrimeAdapter)getListAdapter()).notifyDataSetChanged();
     }
 
     private class CrimeAdapter extends ArrayAdapter<Crime>{
